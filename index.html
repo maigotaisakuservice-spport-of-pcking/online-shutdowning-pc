@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>シャットダウンの迷宮</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Windows XP風のデスクトップ -->
+  <div id="desktop">
+    <!-- タスクバー -->
+    <div id="taskbar">
+      <div id="start-button">スタート</div>
+      <div id="clock"></div>
+    </div>
+    <!-- デスクトップアイコン群 -->
+    <div id="desktop-icons">
+      <div class="icon" data-app="notepad" id="icon-notepad">メモ帳</div>
+      <div class="icon" data-app="explorer" id="icon-explorer">マイコンピュータ</div>
+      <div class="icon" data-app="browser" id="icon-browser">インターネット</div>
+      <div class="icon" data-app="shutdown" id="icon-shutdown">シャットダウン</div>
+    </div>
+    <!-- アプリウィンドウはここに動的生成 -->
+    <div id="windows-container"></div>
+  </div>
+
+  <!-- スタートメニュー（隠し状態） -->
+  <div id="start-menu" class="hidden">
+    <ul>
+      <li data-app="notepad">メモ帳</li>
+      <li data-app="explorer">マイコンピュータ</li>
+      <li data-app="browser">インターネット</li>
+      <li data-app="shutdown">シャットダウン</li>
+    </ul>
+  </div>
+
+  <!-- システムログ（デバッグ用／背景で動作） -->
+  <div id="log-console" class="hidden">
+    <h3>システムログ</h3>
+    <div id="log-messages"></div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
