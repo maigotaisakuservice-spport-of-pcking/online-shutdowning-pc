@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>シャットダウンの迷宮 - Final Version</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- ログイン画面 -->
+  <div id="login-screen">
+    <h1>ログイン</h1>
+    <input type="text" id="username" placeholder="ユーザー名">
+    <input type="password" id="password" placeholder="パスワード">
+    <button id="login-button">ログイン</button>
+  </div>
+
+  <!-- デスクトップ画面 -->
+  <div id="desktop-screen" class="hidden">
+    <div id="desktop">
+      <!-- XP時代の草むら風背景 -->
+      <button id="shutdown-button">シャットダウン</button>
+      <!-- 異常通知表示エリア -->
+      <div id="notification-area"></div>
+    </div>
+  </div>
+
+  <!-- 逃げルナダイアログ -->
+  <div id="shutdown-dialog" class="hidden">
+    <div class="dialog-content">
+      <p>逃げルナ</p>
+      <button id="shutdown-dialog-ok">OK</button>
+    </div>
+  </div>
+
+  <!-- ブルースク画面（ゲームクリア） -->
+  <div id="blue-screen" class="hidden">
+    <div id="blue-screen-content">
+      <p id="progress-text">進行状況: 0%</p>
+    </div>
+  </div>
+
+  <!-- サーバー通信中表示 -->
+  <div id="server-message" class="hidden">
+    <p>サーバー通信中です… Miikurosoft DataCenter</p>
+  </div>
+
+  <!-- 既存のシステムアプリウィンドウ -->
+  <div id="file-explorer" class="app-window hidden">
+    <div class="app-header">ファイルエクスプローラー</div>
+    <div class="app-content">
+      <p>新規追加された不明なファイルを検出しました。</p>
+    </div>
+    <button class="app-close" data-app="file-explorer">閉じる</button>
+  </div>
+
+  <div id="task-manager" class="app-window hidden">
+    <div class="app-header">タスクマネージャ</div>
+    <div class="app-content">
+      <p>不審なプロセス一覧: ShutdownKey</p>
+    </div>
+    <button class="app-close" data-app="task-manager">閉じる</button>
+  </div>
+
+  <div id="mail-app" class="app-window hidden">
+    <div class="app-header">メール</div>
+    <div class="app-content">
+      <p>受信メール内容が改変されています。</p>
+    </div>
+    <button class="app-close" data-app="mail-app">閉じる</button>
+  </div>
+
+  <div id="notepad" class="app-window hidden">
+    <div class="app-header">メモ帳</div>
+    <div class="app-content">
+      <p>不滅の文: 「永遠に続く夜の謎…」</p>
+    </div>
+    <button class="app-close" data-app="notepad">閉じる</button>
+  </div>
+
+  <div id="search-history" class="app-window hidden">
+    <div class="app-header">検索履歴</div>
+    <div class="app-content">
+      <p>他人の検索履歴が表示されています。</p>
+    </div>
+    <button class="app-close" data-app="search-history">閉じる</button>
+  </div>
+
+  <div id="chat-app" class="app-window hidden">
+    <div class="app-header">デジタルチャット</div>
+    <div class="app-content">
+      <p>過去のユーザーからのメッセージ: 「助けて…」</p>
+    </div>
+    <button class="app-close" data-app="chat-app">閉じる</button>
+  </div>
+
+  <!-- 新規追加のシステムアプリウィンドウ -->
+  <div id="security-log" class="app-window hidden">
+    <div class="app-header">セキュリティログ</div>
+    <div class="app-content">
+      <p>不明なログインの履歴が記録されています。</p>
+    </div>
+    <button class="app-close" data-app="security-log">閉じる</button>
+  </div>
+
+  <div id="shortcut-manager" class="app-window hidden">
+    <div class="app-header">ショートカット管理</div>
+    <div class="app-content">
+      <p>不審なショートカットが検出されました。</p>
+    </div>
+    <button class="app-close" data-app="shortcut-manager">閉じる</button>
+  </div>
+
+  <div id="start-menu-manager" class="app-window hidden">
+    <div class="app-header">スタートメニュー管理</div>
+    <div class="app-content">
+      <p>スタートメニューの異常が報告されています。</p>
+    </div>
+    <button class="app-close" data-app="start-menu-manager">閉じる</button>
+  </div>
+
+  <div id="clock-sync" class="app-window hidden">
+    <div class="app-header">時計同期</div>
+    <div class="app-content">
+      <p>システム時計のズレが検出されました。</p>
+    </div>
+    <button class="app-close" data-app="clock-sync">閉じる</button>
+  </div>
+
+  <div id="browser-settings" class="app-window hidden">
+    <div class="app-header">ブラウザ設定</div>
+    <div class="app-content">
+      <p>既定のホームページが変更されています。</p>
+    </div>
+    <button class="app-close" data-app="browser-settings">閉じる</button>
+  </div>
+
+  <div id="event-log-viewer" class="app-window hidden">
+    <div class="app-header">イベントログ</div>
+    <div class="app-content">
+      <p>自動再生ログの内容が記録されています。</p>
+    </div>
+    <button class="app-close" data-app="event-log-viewer">閉じる</button>
+  </div>
+
+  <div id="program-restore" class="app-window hidden">
+    <div class="app-header">プログラム復元</div>
+    <div class="app-content">
+      <p>削除済みプログラムが復活しました。</p>
+    </div>
+    <button class="app-close" data-app="program-restore">閉じる</button>
+  </div>
+
+  <div id="audio-monitor" class="app-window hidden">
+    <div class="app-header">オーディオモニター</div>
+    <div class="app-content">
+      <p>謎の音声が検出されました。</p>
+    </div>
+    <button class="app-close" data-app="audio-monitor">閉じる</button>
+  </div>
+
+  <div id="wallpaper-decoder" class="app-window hidden">
+    <div class="app-header">壁紙デコーダー</div>
+    <div class="app-content">
+      <p>暗号化された壁紙の情報を解析中です。</p>
+    </div>
+    <button class="app-close" data-app="wallpaper-decoder">閉じる</button>
+  </div>
+
+  <div id="printer-manager" class="app-window hidden">
+    <div class="app-header">プリンタ管理</div>
+    <div class="app-content">
+      <p>プリンタ設定が変更されています。</p>
+    </div>
+    <button class="app-close" data-app="printer-manager">閉じる</button>
+  </div>
+
+  <div id="system-event-viewer" class="app-window hidden">
+    <div class="app-header">システムイベント</div>
+    <div class="app-content">
+      <p>未来の日付エラーが発生しています。</p>
+    </div>
+    <button class="app-close" data-app="system-event-viewer">閉じる</button>
+  </div>
+
+  <div id="network-monitor" class="app-window hidden">
+    <div class="app-header">ネットワーク監視</div>
+    <div class="app-content">
+      <p>未知の接続先にアクセス中です。</p>
+    </div>
+    <button class="app-close" data-app="network-monitor">閉じる</button>
+  </div>
+
+  <div id="device-manager" class="app-window hidden">
+    <div class="app-header">デバイス管理</div>
+    <div class="app-content">
+      <p>幻のハードウェアが検出されました。</p>
+    </div>
+    <button class="app-close" data-app="device-manager">閉じる</button>
+  </div>
+
+  <div id="disk-checker" class="app-window hidden">
+    <div class="app-header">ディスクチェッカー</div>
+    <div class="app-content">
+      <p>存在し得ないセクターが確認されました。</p>
+    </div>
+    <button class="app-close" data-app="disk-checker">閉じる</button>
+  </div>
+
+  <div id="screensaver" class="app-window hidden">
+    <div class="app-header">スクリーンセーバー</div>
+    <div class="app-content">
+      <p>自動起動スクリーンセーバーが動作中です。</p>
+      <canvas id="screensaver-canvas" width="280" height="150"></canvas>
+    </div>
+    <button class="app-close" data-app="screensaver">閉じる</button>
+  </div>
+
+  <div id="sound-analyzer" class="app-window hidden">
+    <div class="app-header">サウンド解析</div>
+    <div class="app-content">
+      <p>逆再生のシステム音が解析されています。</p>
+    </div>
+    <button class="app-close" data-app="sound-analyzer">閉じる</button>
+  </div>
+
+  <div id="partition-manager" class="app-window hidden">
+    <div class="app-header">パーティション管理</div>
+    <div class="app-content">
+      <p>隠しパーティションの情報を表示中です。</p>
+    </div>
+    <button class="app-close" data-app="partition-manager">閉じる</button>
+  </div>
+
+  <div id="window-overlay-debugger" class="app-window hidden">
+    <div class="app-header">ウィンドウオーバーレイ</div>
+    <div class="app-content">
+      <p>重なったウィンドウからの異常が検出されました。</p>
+    </div>
+    <button class="app-close" data-app="window-overlay-debugger">閉じる</button>
+  </div>
+
+  <div id="device-history" class="app-window hidden">
+    <div class="app-header">デバイス履歴</div>
+    <div class="app-content">
+      <p>存在しないデバイスの接続履歴が表示されています。</p>
+    </div>
+    <button class="app-close" data-app="device-history">閉じる</button>
+  </div>
+
+  <div id="keyboard-settings" class="app-window hidden">
+    <div class="app-header">キーボード設定</div>
+    <div class="app-content">
+      <p>ショートカットキーが無効化されています。</p>
+    </div>
+    <button class="app-close" data-app="keyboard-settings">閉じる</button>
+  </div>
+
+  <div id="hint-viewer" class="app-window hidden">
+    <div class="app-header">ヒントビューア</div>
+    <div class="app-content">
+      <p>ブルースクのヒントが表示されています。</p>
+    </div>
+    <button class="app-close" data-app="hint-viewer">閉じる</button>
+  </div>
+
+  <div id="time-sync" class="app-window hidden">
+    <div class="app-header">時刻同期</div>
+    <div class="app-content">
+      <p>システム時計が巻き戻り始めています。</p>
+    </div>
+    <button class="app-close" data-app="time-sync">閉じる</button>
+  </div>
+
+  <div id="security-alert" class="app-window hidden">
+    <div class="app-header">セキュリティアラート</div>
+    <div class="app-content">
+      <p>自己生成ウイルスが検出されました。</p>
+    </div>
+    <button class="app-close" data-app="security-alert">閉じる</button>
+  </div>
+
+  <div id="system-info" class="app-window hidden">
+    <div class="app-header">システム情報</div>
+    <div class="app-content">
+      <p>未来のハード情報が表示されています。</p>
+    </div>
+    <button class="app-close" data-app="system-info">閉じる</button>
+  </div>
+
+  <div id="power-options" class="app-window hidden">
+    <div class="app-header">電源オプション</div>
+    <div class="app-content">
+      <p>Shutdown Ritual項目が追加されました。</p>
+    </div>
+    <button class="app-close" data-app="power-options">閉じる</button>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
