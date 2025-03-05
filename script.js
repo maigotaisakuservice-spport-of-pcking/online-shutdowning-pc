@@ -3,6 +3,44 @@
 document.addEventListener("DOMContentLoaded", init);
 
 function init() {
+    // 各画面要素の参照を取得
+  const loginScreen = document.getElementById("login-screen");
+  const desktopScreen = document.getElementById("desktop-screen");
+  const shutdownDialog = document.getElementById("shutdown-dialog");
+  const blueScreen = document.getElementById("blue-screen");
+  const serverMessage = document.getElementById("server-message");
+  const notificationArea = document.getElementById("notification-area");
+
+  const loginButton = document.getElementById("login-button");
+  const shutdownButton = document.getElementById("shutdown-button");
+  const shutdownDialogOk = document.getElementById("shutdown-dialog-ok");
+  const progressText = document.getElementById("progress-text");
+
+  // ログイン処理（簡易的なダミーチェック）
+  loginButton.addEventListener("click", function() {
+    // 入力チェックなど必要なら追加（現状は常に成功）
+    loginScreen.classList.add("hidden");
+    desktopScreen.classList.remove("hidden");
+
+    // シャットダウンボタン押下時
+  shutdownButton.addEventListener("click", function() {
+    // 複数回押下されないように無効化
+    shutdownButton.disabled = true;
+    // ユーザー操作でのシャットダウン開始（1秒後に逃げルナダイアログ表示）
+    setTimeout(function() {
+      shutdownDialog.classList.remove("hidden");
+    }, 1000);
+  });
+
+// 逃げルナダイアログのOKボタン押下時
+  shutdownDialogOk.addEventListener("click", function() {
+    shutdownDialog.classList.add("hidden");
+    startBlueScreen();
+  });
+    
+  // ゲーム開始：バックグラウンド処理開始
+  startAnomalyEvents();
+  startServerMessageTimer();
   initClock();
   initDesktop();
   initStartMenu();
@@ -13,6 +51,50 @@ function init() {
   anomalyManager.scheduleAnomalies();
 }
 
+
+// サーバー通信中の表示を2分毎に行う（表示時間は5秒）
+  function startServerMessageTimer() {
+    function showServerMessage() {
+      serverMessage.classList.remove("hidden");
+      setTimeout(function() {
+        serverMessage.classList.add("hidden");
+      }, 5000);
+    }
+    // 初回は2分後から、以降2分毎に表示
+    setInterval(showServerMessage, 120000);
+  }
+
+ // ブルースク画面（ゲームクリア）を開始する
+  function startBlueScreen() {
+    desktopScreen.classList.add("hidden");
+    blueScreen.classList.remove("hidden");
+
+    let progress = 0;
+    let elapsedSeconds = 0;
+    const totalDuration = 30; // 最大30秒で100%にする
+    const interval = setInterval(function() {
+      elapsedSeconds++;
+      const remainingTime = totalDuration - elapsedSeconds;
+      // 残り時間が少ない場合は平均以上の進捗に調整
+      const averageIncrement = (100 - progress) / (remainingTime > 0 ? remainingTime : 1);
+      // 乱数要素を加えつつ、進捗を更新（3～7程度のランダムな変動）
+      let increment = Math.floor(Math.random() * 5) + 3;
+      // 平均より大きくならないように補正
+      if (increment > averageIncrement * 1.5) {
+        increment = Math.floor(averageIncrement);
+      }
+      progress = Math.min(100, progress + increment);
+      progressText.textContent = "進行状況: " + progress + "%";
+      if (progress >= 100) {
+        clearInterval(interval);
+        // 100%になったら、1秒後にタブを自動閉鎖（※ブラウザによっては window.close() が効かない場合があります）
+        setTimeout(function() {
+          window.close();
+        }, 1000);
+      }
+    }, 1000);
+  }
+                               
 /* ===========================
    時計更新処理（現在時刻／異常時の変更反映）
    =========================== */
